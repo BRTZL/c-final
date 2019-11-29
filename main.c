@@ -10,16 +10,26 @@ int matrix();
 int main()
 {
     int operation[MAXLINE][MAXLINE];
-    int option = 1, approval = 0, space = 0, func = 0;
+    int option = 0, approval = 0, space = 0, func = 0;
     char equation[MAXLINE];
     char approved[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '+', '-', '(', ')', ' ', 'e', 'x', 'p', 'j', 'i'};
 
     printf("Welcome to our COPMLEX NUMBER CALCULATOR");
-    printf("\nby BRTZL,");
+    printf("\nby ....");
     printf("\n\nBefore continue please enter which mode you want to use: ");
     printf("\n\t1. Expression mode (default)");
     printf("\n\t2. Matrix mode\n : ");
     scanf("%d", &option);
+
+    while (option != 1 && option != 2)
+    {
+        fflush(stdin);
+        printf("\nYou entered invalid choose");
+        printf("\n\nBefore continue please enter which mode you want to use: ");
+        printf("\n\t1. Expression mode (default)");
+        printf("\n\t2. Matrix mode\n : ");
+        scanf("%d", &option);
+    }
 
     while (approval == 0)
     {
