@@ -83,6 +83,7 @@ int main()
     printf("\n..");
 
     //Analyze equation and store its compenents in operation list
+
     /*
     exp(1-2) - 4
     */
