@@ -89,10 +89,15 @@ int main()
 
     for (int i = 0; i < strlen(equation); i++)
     {
+        printf("\n %d", atoi(equation[i]));
+    }
+
+    /*
+    for (int i = 0; i < strlen(equation); i++)
+    {
         printf("\n.. -- %d", i);
         if (equation[i] == 'e' && equation[i + 1] == 'x' && equation[i + 2] == 'p' && equation[i + 3] == '(')
         {
-
             func = i + 4;
             while (equation[func] != ')')
             {
@@ -116,6 +121,7 @@ int main()
                 space++;
         }
     }
+    */
 
     printf("\n...");
 
