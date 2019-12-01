@@ -87,11 +87,6 @@ int main()
     exp(1-2) - 4
     */
 
-    for (int i = 0; i < strlen(equation); i++)
-    {
-        printf("\n %d", atoi(equation[i]));
-    }
-
     /*
     for (int i = 0; i < strlen(equation); i++)
     {
