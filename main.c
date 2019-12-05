@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define MAXLINE 100
 
 int expression();
 int matrix();
+int exp_calc(char str[MAXLINE]);
+void print_array(char str[]);
 
 typedef struct complex
 {
@@ -35,13 +38,27 @@ equation  1. layer -->
 
 */
 
+void print_array(char str[])
+{
+    printf("\n\t array -> \'");
+    for (int i = 0; i < strlen(str); i++)
+    {
+        printf("%c", str[i]);
+    }
+    printf("\'");
+}
+
+int exp_calc(char str[MAXLINE])
+{
+    return 0;
+}
+
 int main()
 {
-    int operation[MAXLINE][MAXLINE];
-    int option = 0, approval = 0, space = 0, func = 0;
+    int option = 0, approval = 0;
     char equation[MAXLINE];
 
-    char approved[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '+', '-', '(', ')', ' ', 'e', 'x', 'p', 'j', 'i'};
+    char approved[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', '0', '+', '-', '(', ')', ' ', 'e', 'x', 'p', 'j', 'i'};
 
     printf("Welcome to our COPMLEX NUMBER CALCULATOR");
     printf("\nby ....");
@@ -80,46 +97,73 @@ int main()
         }
     }
 
-    printf("\n..");
+    printf("\n.");
 
     //Analyze equation and store its compenents in operation list
 
     /*
-    exp(1-2) - 4
+    real 
+    1+2j+6exp(-0.3pij)+6j+9+0.23exp(-0.4j)+12j
+    000000000011111111112222222222333333333344
+    012345678901234567890123456789012345678901
+
+    test for only numbers
+    1+2j+6-6j-9+12j
+    000000000011111
+    012345678901234
     */
 
-    /*
+    ///*
+    int space = 0, func = 0, factor = 1;
+    float tempNumber = 0;
+    char operation[MAXLINE][MAXLINE];
+    char temp[MAXLINE];
+    memset(&temp[0], 0, sizeof(temp));
+
     for (int i = 0; i < strlen(equation); i++)
     {
-        printf("\n.. -- %d", i);
+        printf("\nfor loop i: %d", i);
         if (equation[i] == 'e' && equation[i + 1] == 'x' && equation[i + 2] == 'p' && equation[i + 3] == '(')
         {
-            func = i + 4;
-            while (equation[func] != ')')
+            func = 0;
+            i += 4;
+            memset(&temp[0], 0, sizeof(temp));
+            while (equation[func + i] != ')')
             {
+                temp[func] = equation[func + i];
                 func++;
             }
-            space += func + 1;
-            i = func;
-            printf(". %d %d", func, space);
+            exp_calc(temp);
+            printf("\n\t func:%d", func);
+            print_array(temp);
+            i += func;
         }
-        else
+        else if (equation[i] == '-' || equation[i] == '+' || (i == 0 != (equation[i] == '-' || equation[i] == '+')))
         {
-            if (equation[i] <= '9' && equation[i] >= '0')
-                operation[i - space][0] = equation[i] - '0';
-            else if (equation[i] == '+')
-                operation[i - space][1] = 1;
-            else if (equation[i] == '-')
-                operation[i - space][1] = 0;
-            else if (equation[i] == '*')
-                operation[i - space][1] = 2;
-            else if (equation[i] == ' ')
-                space++;
+            func = 0;
+            i++;
+            if (i == 1)
+                i--;
+            memset(&temp[0], 0, sizeof(temp));
+            while (equation[func + i] != '-' && equation[func + i] != '+')
+            {
+                temp[func] = equation[func + i];
+                func++;
+            }
+            printf("\n\t func:%d", func);
+            if (temp[strlen(temp) - 1] == 'j')
+                operation[i][2] = temp;
+            else
+                operation[i][1] = temp;
+            print_array(temp);
+            i += func - 1;
         }
     }
-    */
 
-    printf("\n...");
+    //*/
+
+    printf("\n\nspaces: %d", space);
+    printf("\n..");
 
     /*
     for (int i = 0; i < MAXLINE; i++)
@@ -134,7 +178,7 @@ int main()
         expression();
     else
         matrix();
-
+    printf("\n...");
     return 0;
 }
 
