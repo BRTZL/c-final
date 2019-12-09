@@ -41,7 +41,7 @@ equation  1. layer -->
 void print_array(char str[])
 {
     printf("\n\t array -> \'");
-    for (int i = 0; i < strlen(str); i++)
+    for (unsigned long i = 0; i < strlen(str); i++)
     {
         printf("%c", str[i]);
     }
@@ -50,12 +50,14 @@ void print_array(char str[])
 
 int exp_calc(char str[MAXLINE])
 {
+    //eular calculation
     return 0;
 }
 
 int main()
 {
     int option = 0, approval = 0;
+    int debug = 1;
     char equation[MAXLINE];
 
     char approved[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', '0', '+', '-', '(', ')', ' ', 'e', 'x', 'p', 'j', 'i'};
@@ -65,7 +67,11 @@ int main()
     printf("\n\nBefore continue please enter which mode you want to use: ");
     printf("\n\t1. Expression mode (default)");
     printf("\n\t2. Matrix mode\n : ");
-    scanf("%d", &option);
+    if (!debug)
+        scanf("%d", &option);
+
+    if (debug)
+        option = 1;
 
     while (option != 1 && option != 2)
     {
@@ -86,7 +92,16 @@ int main()
 
         for (int i = 0; i < strlen(equation); i++)
         {
-            if (strchr(approved, equation[i]) == NULL)
+            if ((equation[i] == '-' && equation[i + 1] == '-') || (equation[i] == '+' && equation[i + 1] == '+'))
+            {
+                printf("\nYou entered two operator in a row -> %c%c", equation[i], equation[i + 1]);
+                printf("\n                            index no ^^");
+                printf("\n                                     %d%d", i / 10, (i + 1) / 10);
+                printf("\n                                     %d%d\n", i % 10, (i + 1) % 10);
+                approval = 0;
+                break;
+            }
+            else if (strchr(approved, equation[i]) == NULL)
             {
                 printf("\nYou entered unapproved character -- %c\n", equation[i]);
                 approval = 0;
@@ -101,6 +116,59 @@ int main()
 
     //Analyze equation and store its compenents in operation list
 
+    ///*
+    int space = 0, func = 0, term = 0;
+    int operation[MAXLINE][MAXLINE];
+    char temp[MAXLINE], temp_exp[MAXLINE];
+    memset(&temp[0], 0, sizeof(temp));
+
+    for (int i = 0; i < strlen(equation); i++)
+    {
+        printf("\nfor loop i: %d", i);
+        if (equation[i] == '-' || equation[i] == '+' || (i == 0 && (equation[i] != '-' || equation[i] != '+')))
+        {
+            func = 0;
+            i++;
+
+            if (i == 1 && (equation[i - 1] != '-' && equation[i - 1] != '+'))
+                i--;
+
+            memset(&temp[0], 0, sizeof(temp));
+
+            if (equation[i - 1] != NULL)
+                temp[0] = equation[i - 1];
+            else
+                temp[0] = '+';
+
+            while ((equation[func + i] != '-' && equation[func + i] != '+') != (equation[func + i - 1] == '('))
+            {
+                int tfunc;
+                if (equation[i + func] == 'e' && equation[i + 1 + func] == 'x' && equation[i + 2 + func] == 'p' && equation[i + 3 + func] == '(')
+                {
+                    tfunc = 0;
+                    func += 4;
+                    memset(&temp_exp[0], 0, sizeof(temp_exp));
+                    while (equation[func + i + tfunc] != ')')
+                    {
+                        temp_exp[tfunc] = equation[func + i + tfunc];
+                        tfunc++;
+                    }
+                    printf("\n\t func exp:%d", tfunc);
+                    exp_calc(temp_exp);
+                    print_array(temp_exp);
+                    func += tfunc;
+                }
+                temp[func + 1] = equation[func + i];
+                func++;
+            }
+            printf("\n\t func:%d", func);
+            
+            print_array(temp);
+            i += func - 1;
+            term++;
+        }
+    }
+
     /*
     real 
     1+2j+6exp(-0.3pij)+6j+9+0.23exp(-0.4j)+12j
@@ -112,53 +180,6 @@ int main()
     000000000011111
     012345678901234
     */
-
-    ///*
-    int space = 0, func = 0, factor = 1;
-    float tempNumber = 0;
-    char operation[MAXLINE][MAXLINE];
-    char temp[MAXLINE];
-    memset(&temp[0], 0, sizeof(temp));
-
-    for (int i = 0; i < strlen(equation); i++)
-    {
-        printf("\nfor loop i: %d", i);
-        if (equation[i] == 'e' && equation[i + 1] == 'x' && equation[i + 2] == 'p' && equation[i + 3] == '(')
-        {
-            func = 0;
-            i += 4;
-            memset(&temp[0], 0, sizeof(temp));
-            while (equation[func + i] != ')')
-            {
-                temp[func] = equation[func + i];
-                func++;
-            }
-            exp_calc(temp);
-            printf("\n\t func:%d", func);
-            print_array(temp);
-            i += func;
-        }
-        else if (equation[i] == '-' || equation[i] == '+' || (i == 0 != (equation[i] == '-' || equation[i] == '+')))
-        {
-            func = 0;
-            i++;
-            if (i == 1)
-                i--;
-            memset(&temp[0], 0, sizeof(temp));
-            while (equation[func + i] != '-' && equation[func + i] != '+')
-            {
-                temp[func] = equation[func + i];
-                func++;
-            }
-            printf("\n\t func:%d", func);
-            if (temp[strlen(temp) - 1] == 'j')
-                operation[i][2] = temp;
-            else
-                operation[i][1] = temp;
-            print_array(temp);
-            i += func - 1;
-        }
-    }
 
     //*/
 
