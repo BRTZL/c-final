@@ -9,6 +9,7 @@ int expression();
 int matrix();
 int exp_calc(char str[MAXLINE]);
 void print_array(char str[]);
+void strConversion(char str[MAXLINE][MAXLINE], int term);
 
 typedef struct complex
 {
@@ -46,6 +47,20 @@ void print_array(char str[])
         printf("%c", str[i]);
     }
     printf("\'");
+}
+
+void strConversion(char str[MAXLINE][MAXLINE], int term)
+{
+    printf("\n\t array -> \n");
+    for (int i = 0; i < term; i++)
+    {
+        printf("\t\'");
+        for (unsigned long j = 0; j < strlen(str[i]); j++)
+        {
+            printf("%c", str[i][j]);
+        }
+        printf("\'\n");
+    }
 }
 
 int exp_calc(char str[MAXLINE])
@@ -118,9 +133,10 @@ int main()
 
     ///*
     int space = 0, func = 0, term = 0;
-    int operation[MAXLINE][MAXLINE];
+    char operation[MAXLINE][MAXLINE];
     char temp[MAXLINE], temp_exp[MAXLINE];
     memset(&temp[0], 0, sizeof(temp));
+    memset(&operation[0][0], 0, sizeof(operation));
 
     for (int i = 0; i < strlen(equation); i++)
     {
@@ -133,41 +149,42 @@ int main()
             if (i == 1 && (equation[i - 1] != '-' && equation[i - 1] != '+'))
                 i--;
 
-            memset(&temp[0], 0, sizeof(temp));
+            //memset(&temp[0], 0, sizeof(temp));
 
             if (equation[i - 1] != NULL)
-                temp[0] = equation[i - 1];
+                operation[term][0] = equation[i - 1]; //temp[0] = equation[i - 1];
             else
-                temp[0] = '+';
+                operation[term][0] = '+'; //temp[0] = '+';
 
             while ((equation[func + i] != '-' && equation[func + i] != '+') != (equation[func + i - 1] == '('))
             {
-                int tfunc;
                 if (equation[i + func] == 'e' && equation[i + 1 + func] == 'x' && equation[i + 2 + func] == 'p' && equation[i + 3 + func] == '(')
                 {
-                    tfunc = 0;
+                    term++;
+                    int tfunc = 0;
                     func += 4;
                     memset(&temp_exp[0], 0, sizeof(temp_exp));
                     while (equation[func + i + tfunc] != ')')
                     {
-                        temp_exp[tfunc] = equation[func + i + tfunc];
+                        operation[term][tfunc] = equation[func + i + tfunc]; //temp_exp[tfunc] = equation[func + i + tfunc];
                         tfunc++;
                     }
+
                     printf("\n\t func exp:%d", tfunc);
-                    exp_calc(temp_exp);
-                    print_array(temp_exp);
+                    print_array(operation[term]);
                     func += tfunc;
                 }
-                temp[func + 1] = equation[func + i];
+                operation[term][func + 1] = equation[func + i]; //temp[func + 1] = equation[func + i];
                 func++;
             }
             printf("\n\t func:%d", func);
-            
-            print_array(temp);
+            print_array(operation[term - 1]);
             i += func - 1;
             term++;
         }
     }
+
+    strConversion(operation, term);
 
     /*
     real 
