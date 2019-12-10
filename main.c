@@ -55,7 +55,19 @@ void strConversion(char str[MAXLINE][MAXLINE], int term)
     for (int i = 0; i < term; i++)
     {
         printf("\t\'");
-        for (unsigned long j = 0; j < strlen(str[i]); j++)
+        int len = strlen(str[i]);
+        for (int j = 0; j < len; j++) //removing unnecessary spaces
+        {
+            if (str[i][j] == ' ')
+            {
+                for (int z = j; z < len; z++)
+                {
+                    str[i][z] = str[i][z + 1];
+                }
+                len--;
+            }
+        }
+        for (int j = 0; j < strlen(str[i]); j++)
         {
             printf("%c", str[i][j]);
         }
@@ -103,6 +115,7 @@ int main()
         fflush(stdin);
         printf("Please type your equation: ");
         fflush(stdin);
+        memset(&equation[0], 0, sizeof(equation));
         gets(equation);
 
         for (int i = 0; i < strlen(equation); i++)
@@ -161,13 +174,23 @@ int main()
                 if (equation[i + func] == 'e' && equation[i + 1 + func] == 'x' && equation[i + 2 + func] == 'p' && equation[i + 3 + func] == '(')
                 {
                     term++;
+                    space = 0;
                     int tfunc = 0;
                     func += 4;
                     memset(&temp_exp[0], 0, sizeof(temp_exp));
-                    while (equation[func + i + tfunc] != ')')
+                    while (equation[i + func + tfunc] != ')')
                     {
-                        operation[term][tfunc] = equation[func + i + tfunc]; //temp_exp[tfunc] = equation[func + i + tfunc];
-                        tfunc++;
+                        if (equation[i + func + tfunc] == 'p' && equation[i + func + tfunc + 1] == 'i')
+                        {
+                            operation[term][tfunc - space] = 'p';
+                            space++;
+                            tfunc += 2;
+                        }
+                        else
+                        {
+                            operation[term][tfunc - space] = equation[func + i + tfunc]; //temp_exp[tfunc] = equation[func + i + tfunc];
+                            tfunc++;
+                        }
                     }
 
                     printf("\n\t func exp:%d", tfunc);
