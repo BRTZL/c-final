@@ -70,9 +70,10 @@ void strConversion(char str[MAXLINE][MAXLINE], int term)
             number = exp_calc(str[i], number);
         else
             number = norm_calc(str[i], number);
+        printf("\n\treal: %.3f imag: %.3f\n", number.real, number.imag);
     }
 
-    printf("real: %.3f imag: %.3f", number.real, number.imag);
+    //printf("\n\n\treal: %.3f imag: %.3f", number.real, number.imag);
 }
 /*
 1+2j+6exp(-0.3pij)+6j+9+0.23exp(-0.4j)+12j
@@ -111,7 +112,9 @@ complex exp_calc(char str[MAXLINE], complex number)
 complex euler(char str[MAXLINE])
 {
     complex temp;
-    
+    temp.imag = 0;
+    temp.real = 0;
+
     return temp;
 }
 
@@ -123,71 +126,7 @@ complex add(complex n1, complex n2)
     return (temp);
 }
 
-int main()
-{
-    int option = 0, approval = 0;
-    int debug = 1;
-    char equation[MAXLINE];
 
-    char approved[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', '0', '+', '-', '(', ')', ' ', 'e', 'x', 'p', 'j', 'i'};
-
-    printf("Welcome to our COPMLEX NUMBER CALCULATOR");
-    printf("\nby ....");
-    printf("\n\nBefore continue please enter which mode you want to use: ");
-    printf("\n\t1. Expression mode (default)");
-    printf("\n\t2. Matrix mode\n : ");
-    if (!debug)
-        scanf("%d", &option);
-
-    if (debug)
-        option = 1;
-
-    while (option != 1 && option != 2)
-    {
-        fflush(stdin);
-        printf("\nYou entered invalid choose");
-        printf("\n\nBefore continue please enter which mode you want to use: ");
-        printf("\n\t1. Expression mode (default)");
-        printf("\n\t2. Matrix mode\n : ");
-        scanf("%d", &option);
-    }
-
-    while (approval == 0)
-    {
-        fflush(stdin);
-        printf("Please type your equation: ");
-        fflush(stdin);
-        memset(&equation[0], 0, sizeof(equation));
-        gets(equation);
-
-        for (unsigned long i = 0; i < strlen(equation); i++)
-        {
-            if ((equation[i] == '-' && equation[i + 1] == '-') || (equation[i] == '+' && equation[i + 1] == '+'))
-            {
-                printf("\nYou entered two operator in a row -> %c%c", equation[i], equation[i + 1]);
-                printf("\n                            index no ^^");
-                printf("\n                                     %lu%lu", i / 10, (i + 1) / 10);
-                printf("\n                                     %lu%lu\n", i % 10, (i + 1) % 10);
-                approval = 0;
-                break;
-            }
-            else if (strchr(approved, equation[i]) == NULL)
-            {
-                printf("\nYou entered unapproved character -> %c", equation[i]);
-                printf("\n                           index no ^");
-                printf("\n                                    %lu", i / 10);
-                printf("\n                                    %lu\n", i % 10);
-                approval = 0;
-                break;
-            }
-            else
-                approval = 1;
-        }
-    }
-
-    printf("\n.");
-
-    //Analyze equation and store its compenents in operation list
 
     ///*
     int space = 0, func = 0, term = 0;
@@ -216,8 +155,7 @@ int main()
 
             while ((equation[func + i] != '-' && equation[func + i] != '+') != (equation[func + i - 1] == '('))
             {
-                if (equation[i + func] == 'e' && equation[i + 1 + func] == 'x' && equation[i + 2 + func] == 'p' && equation[i + 3 + func] == '(')
-                {
+                
                     term++;
                     space = 0;
                     int tfunc = 0;
@@ -243,8 +181,14 @@ int main()
                     // print_array(operation[term]);
                     func += tfunc;
                 }
-                operation[term][func + 1] = equation[func + i]; //temp[func + 1] = equation[func + i];
-                func++;
+                else if (equation[i + func + 1] == 'e' && )
+                {
+                }
+                else
+                {
+                    operation[term][func + 1] = equation[func + i]; //temp[func + 1] = equation[func + i];
+                    func++;
+                }
             }
             //printf("\n\t func:%d", func);
             //print_array(operation[term]);
