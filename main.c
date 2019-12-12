@@ -5,29 +5,21 @@
 
 #define MAXLINE 100
 
-int expression();
-int matrix();
-char *exp_calc(char str[MAXLINE]);
-double norm_calc(char str[MAXLINE]);
-void print_array(char str[]);
-void strConversion(char str[MAXLINE][MAXLINE], int term);
-
-typedef struct complex
+typedef struct complex_number
 {
-    float real;
-    float imag;
-}
+    double real;
+    double imag;
+} complex;
 
-complex;
 complex add(complex n1, complex n2);
+complex exp_calc(char str[MAXLINE], complex number);
+complex norm_calc(char str[MAXLINE], complex number);
 
-complex add(complex n1, complex n2)
-{
-    complex temp;
-    temp.real = n1.real + n2.real;
-    temp.imag = n1.imag + n2.imag;
-    return (temp);
-}
+int matrix();
+int expression();
+void print_array(char str[]);
+complex euler(char str[MAXLINE]);
+void strConversion(char str[MAXLINE][MAXLINE], int term);
 
 /*
 
@@ -52,6 +44,10 @@ void print_array(char str[])
 
 void strConversion(char str[MAXLINE][MAXLINE], int term)
 {
+    complex number;
+    number.real = 0;
+    number.imag = 0;
+
     printf("\nArray -> \n");
     for (int i = 0; i < term; i++)
     {
@@ -70,30 +66,61 @@ void strConversion(char str[MAXLINE][MAXLINE], int term)
 
         printf("\n\t\'%s\'", str[i]);
 
-        if (str[i][len - 1] == 'j')
-            exp_calc(str[i]);
+        if (str[i][len - 1] == 'j' || str[i][len - 2] == 'j')
+            number = exp_calc(str[i], number);
         else
-            norm_calc(str[i]);
+            number = norm_calc(str[i], number);
     }
+
+    printf("real: %.3f imag: %.3f", number.real, number.imag);
 }
 /*
 1+2j+6exp(-0.3pij)+6j+9+0.23exp(-0.4j)+12j
 */
-double norm_calc(char str[MAXLINE])
+complex norm_calc(char str[MAXLINE], complex number)
 {
+    complex temp;
     printf("\n\t\'%.2f\'", atof(str));
+    temp.real = atof(str);
+    temp.imag = 0;
 
-    return atof(str);
+    temp = add(temp, number);
+    return temp;
 }
 
-char *exp_calc(char str[MAXLINE])
+complex exp_calc(char str[MAXLINE], complex number)
 {
     //eular calculation
-    //for (int i = 0; i < strlen(str); i++)
+    complex temp;
 
     printf("\n\t\'%.2fj\'", atof(str));
+    if (str[strlen(str) - 1] == 'e')
+    {
+        temp = euler(str);
+    }
+    else
+    {
+        temp.imag = atof(str);
+        temp.real = 0;
+    }
 
-    return str;
+    temp = add(temp, number);
+    return temp;
+}
+
+complex euler(char str[MAXLINE])
+{
+    complex temp;
+    
+    return temp;
+}
+
+complex add(complex n1, complex n2)
+{
+    complex temp;
+    temp.real = n1.real + n2.real;
+    temp.imag = n1.imag + n2.imag;
+    return (temp);
 }
 
 int main()
