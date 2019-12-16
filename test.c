@@ -6,7 +6,7 @@
 #define MAXLINE 100
 
 void print_array(char str[]);
-void compile_text(char str[]);
+char *compile_text(char str[]);
 
 int main()
 {
@@ -99,27 +99,53 @@ int main()
         }
         else
         {
-            operation[index1][index2] = equation[i];
+            if (index2 == 0)
+                operation[index1][index2] = (i != 0) ? ((equation[i - 1] == '-') ? '-' : '+') : '+';
+
+            operation[index1][index2 + 1] = equation[i];
             index2++;
         }
     }
 
+    printf("\n..");
+
+    char *compiled[index1];
+
     for (int i = 0; i <= index1; i++)
     {
-
-        print_array(operation[i]);
+        compiled[i] = compile_text(operation[i]);
+        print_array(compiled[i]);
     }
+
+    printf("\n...");
+
+    printf("\n\nquiting!");
+    return 0;
 }
 
-void compile_text(char str[])
+/*
+    1+2j+6exp(-0.3pij)+6j+9+0.23exp(-0.4j)+12j
+    */
+
+char *compile_text(char str[])
 {
-    for (unsigned long i = 0; i < strlen(str); i++)
+    int index = 0;
+    int len = strlen(str);
+    for (int i = 0; i < len - index; i++)
     {
         if (str[i] == 'e' && str[i + 1] == 'x' && str[i + 2] == 'p')
         {
-            ;
+            index += 2;
+            str[i] = '*';
+        }
+        else
+        {
+            str[i] = str[i + index];
         }
     }
+    for (int i = len - index; i < len; i++)
+        str[i] = '\0';
+    return str;
 }
 
 void print_array(char str[])
