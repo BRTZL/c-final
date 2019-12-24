@@ -5,8 +5,19 @@
 
 #define MAXLINE 100
 
-void print_array(char str[]);
-char *compile_text(char str[]);
+typedef struct complex_number
+{
+    double real;
+    double imag;
+} complex;
+
+complex add(complex n1, complex n2);
+
+void print_array(char str_chr[]);
+void print_int(double str_int[]);
+char *ready_to_compile(char str[]);
+double *compile(char str[]);
+int get_index(char str[], int space);
 
 int main()
 {
@@ -79,8 +90,10 @@ int main()
     */
 
     char operation[MAXLINE][MAXLINE];
+    double result[MAXLINE][2];
     int index1 = 0, index2 = 0, inside = 0;
     memset(&operation[0], '\0', sizeof(operation));
+    memset(&result[0], '\0', sizeof(result));
 
     for (unsigned long i = 0; i < strlen(equation); i++)
     {
@@ -108,13 +121,20 @@ int main()
     }
 
     printf("\n..");
-
+    //fflush(stdout);
     char *compiled[index1];
+    int temp_index;
 
     for (int i = 0; i <= index1; i++)
     {
-        compiled[i] = compile_text(operation[i]);
+        compiled[i] = ready_to_compile(operation[i]);
+        temp_index = get_index(operation[i], 0);
+        result[i][temp_index] = *compile(compiled[i]);
+        fflush(stdin);
+        //printf("\n\tresult -> \'%f\'", atof(compiled[i]));
+        printf("\n\tresult -> \'%f\'", result[i][temp_index]);
         print_array(compiled[i]);
+        printf("%d", get_index(operation[i], 0));
     }
 
     printf("\n...");
@@ -125,9 +145,9 @@ int main()
 
 /*
     1+2j+6exp(-0.3pij)+6j+9+0.23exp(-0.4j)+12j
-    */
+*/
 
-char *compile_text(char str[])
+char *ready_to_compile(char str[])
 {
     int index = 0;
     int len = strlen(str);
@@ -145,15 +165,72 @@ char *compile_text(char str[])
     }
     for (int i = len - index; i < len; i++)
         str[i] = '\0';
+
+    len -= index;
+
     return str;
 }
 
-void print_array(char str[])
+double *compile(char str[])
 {
-    printf("\n\t array -> \'");
+    double op[MAXLINE];
+    memset(&op[0], '\0', sizeof(op));
+    int len = strlen(str);
+
+    op[0] = atof(str);
+
+    return op;
+}
+
+/*
+    * 0 real NUMBER
+    * 1 coplex NUMBER
+    * 2 exp function
+*/
+
+int get_index(char str[], int space)
+{
+    int state = 0;
+
     for (unsigned long i = 0; i < strlen(str); i++)
     {
-        printf("%c", str[i]);
+        if (str[i] == 'j')
+            state = 1;
+        else if (str[i] == '*')
+            state = 2;
+        else
+            state = 0;
+
+        if (state != 0)
+            break;
+    }
+    return state;
+}
+
+void print_array(char str_chr[])
+{
+    printf("\n\t array -> \'");
+    for (unsigned long i = 0; i < strlen(str_chr); i++)
+    {
+        printf("%c", str_chr[i]);
     }
     printf("\'");
+}
+
+void print_int(double str_int[])
+{
+    printf("\n\t array -> \'");
+    for (unsigned long i = 0; i < sizeof(str_int); i++)
+    {
+        printf("[%f]", str_int[i]);
+    }
+    printf("\'");
+}
+
+complex add(complex n1, complex n2)
+{
+    complex temp;
+    temp.real = n1.real + n2.real;
+    temp.imag = n1.imag + n2.imag;
+    return temp;
 }
