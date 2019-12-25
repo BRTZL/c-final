@@ -16,7 +16,7 @@ complex add(complex n1, complex n2);
 void print_array(char str_chr[]);
 void print_int(double str_int[]);
 char *ready_to_compile(char str[]);
-double *compile(char str[]);
+double *compile(char str[], int temp_index);
 int get_index(char str[], int space);
 
 int main()
@@ -90,10 +90,8 @@ int main()
     */
 
     char operation[MAXLINE][MAXLINE];
-    double result[MAXLINE][2];
     int index1 = 0, index2 = 0, inside = 0;
     memset(&operation[0], '\0', sizeof(operation));
-    memset(&result[0], '\0', sizeof(result));
 
     for (unsigned long i = 0; i < strlen(equation); i++)
     {
@@ -122,6 +120,8 @@ int main()
 
     printf("\n..");
     //fflush(stdout);
+    double *result[MAXLINE][2];
+    memset(&result[0], '\0', sizeof(result));
     char *compiled[index1];
     int temp_index;
 
@@ -129,12 +129,8 @@ int main()
     {
         compiled[i] = ready_to_compile(operation[i]);
         temp_index = get_index(operation[i], 0);
-        result[i][temp_index] = *compile(compiled[i]);
-        fflush(stdin);
-        //printf("\n\tresult -> \'%f\'", atof(compiled[i]));
-        printf("\n\tresult -> \'%f\'", result[i][temp_index]);
-        print_array(compiled[i]);
-        printf("%d", get_index(operation[i], 0));
+        result[i][temp_index] = compile(compiled[i], temp_index);
+        print_int(result[i][temp_index]);
     }
 
     printf("\n...");
@@ -171,13 +167,32 @@ char *ready_to_compile(char str[])
     return str;
 }
 
-double *compile(char str[])
+/*
+    1+2j+6exp(-0.3pij)+6j+9+0.23exp(-0.4j)+12j
+*/
+
+double *compile(char str[], int temp_index)
 {
     double op[MAXLINE];
     memset(&op[0], '\0', sizeof(op));
-    int len = strlen(str);
 
-    op[0] = atof(str);
+    if (temp_index == 0 || temp_index == 1)
+    {
+        op[0] = temp_index;
+        op[1] = atof(str);
+    }
+    else if (temp_index == 2)
+    {
+        op[0] = temp_index;
+        op[1] = atof(str);
+
+        char *ptr = strtok(str, "*");
+        ptr = strtok(NULL, "*");
+        op[2] = atof(ptr);
+        printf("\n%s\n", ptr);
+        ptr = strtok(NULL, "p");
+        printf("\n%s\n", ptr);
+    }
 
     return op;
 }
@@ -221,9 +236,9 @@ void print_int(double str_int[])
 {
     printf("\n\t array -> \'");
     for (unsigned long i = 0; i < sizeof(str_int); i++)
-    {
-        printf("[%f]", str_int[i]);
-    }
+        if ((str_int[i] != 0) || ((str_int[i] != 0) != (i == 0)))
+            printf("[%.2f]", str_int[i]);
+
     printf("\'");
 }
 
