@@ -12,11 +12,12 @@ typedef struct complex_number
 } complex;
 
 complex add(complex n1, complex n2);
+complex calculate(int index, double arr[]);
 
 void print_array(char str_chr[]);
 void print_int(double str_int[]);
 char *ready_to_compile(char str[]);
-double *compile(char str[]);
+double *compile(char str[], int temp_index);
 int get_index(char str[], int space);
 
 int main()
@@ -25,15 +26,19 @@ int main()
     int debug = 1;
     char equation[MAXLINE];
 
-    char approved[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', '0', '+', '-', '(', ')', ' ', 'e', 'x', 'p', 'j', 'i'};
+    char approved[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', '0', '+', '-', '(', ')', ' ', 'e', 'x', 'p', 'j', 'i', '\n'};
 
-    printf("Welcome to our COPMLEX NUMBER CALCULATOR");
+    printf("Welcome to our COMPLEX NUMBER CALCULATOR");
     printf("\nby ....");
     printf("\n\nBefore continue please enter which mode you want to use: ");
     printf("\n\t1. Expression mode (default)");
     printf("\n\t2. Matrix mode\n : ");
+    char ch;
     if (!debug)
-        scanf("%d", &option);
+        ch = fgetc(stdin);
+
+    if (ch == '\n')
+        option = 1;
 
     if (debug)
         option = 1;
@@ -54,7 +59,7 @@ int main()
         printf("Please type your equation: ");
         fflush(stdin);
         memset(&equation[0], 0, sizeof(equation));
-        gets(equation);
+        fgets(equation, MAXLINE, stdin);
 
         for (unsigned long i = 0; i < strlen(equation); i++)
         {
@@ -90,7 +95,7 @@ int main()
     */
 
     char operation[MAXLINE][MAXLINE];
-    double result[MAXLINE][2];
+    double *result[MAXLINE][2];
     int index1 = 0, index2 = 0, inside = 0;
     memset(&operation[0], '\0', sizeof(operation));
     memset(&result[0], '\0', sizeof(result));
@@ -98,13 +103,9 @@ int main()
     for (unsigned long i = 0; i < strlen(equation); i++)
     {
         if (equation[i] == '(')
-        {
             inside = 1;
-        }
         else if (equation[i] == ')')
-        {
             inside = 0;
-        }
         else if ((equation[i] == '-' || equation[i] == '+') && inside == 0)
         {
             index1++;
@@ -114,14 +115,13 @@ int main()
         {
             if (index2 == 0)
                 operation[index1][index2] = (i != 0) ? ((equation[i - 1] == '-') ? '-' : '+') : '+';
-
             operation[index1][index2 + 1] = equation[i];
             index2++;
         }
     }
 
     printf("\n..");
-    //fflush(stdout);
+
     char *compiled[index1];
     int temp_index;
 
@@ -129,13 +129,13 @@ int main()
     {
         compiled[i] = ready_to_compile(operation[i]);
         temp_index = get_index(operation[i], 0);
-        result[i][temp_index] = *compile(compiled[i]);
-        fflush(stdin);
-        //printf("\n\tresult -> \'%f\'", atof(compiled[i]));
-        printf("\n\tresult -> \'%f\'", result[i][temp_index]);
-        print_array(compiled[i]);
-        printf("%d", get_index(operation[i], 0));
+        result[i][temp_index] = compile(compiled[i], temp_index);
+        print_int(result[i][temp_index]);
     }
+
+    complex res;
+
+    res = calculate(result, index1);
 
     printf("\n...");
 
@@ -171,21 +171,38 @@ char *ready_to_compile(char str[])
     return str;
 }
 
-double *compile(char str[])
+double *compile(char str[], int temp_index)
 {
     double op[MAXLINE];
     memset(&op[0], '\0', sizeof(op));
-    int len = strlen(str);
 
-    op[0] = atof(str);
+    if (temp_index == 0 || temp_index == 1)
+    {
+        op[0] = temp_index;
+        op[1] = atof(str);
+    }
+    else if (temp_index == 2)
+    {
+        op[0] = temp_index;
+        op[1] = atof(str);
+
+        char *ptr = strtok(str, "*");
+        char buffer[10];
+        ptr = strtok(NULL, "*");
+        op[2] = atof(ptr);
+        ptr = strtok(ptr, "j");
+        gcvt(op[2], 10, buffer);
+        if (strcmp(ptr, buffer) != 0)
+            op[3] = M_PI;
+    }
 
     return op;
 }
 
 /*
-    * 0 real NUMBER
-    * 1 coplex NUMBER
-    * 2 exp function
+    * 0 real 
+    * 1 coplex 
+    * 2 exp 
 */
 
 int get_index(char str[], int space)
@@ -221,10 +238,20 @@ void print_int(double str_int[])
 {
     printf("\n\t array -> \'");
     for (unsigned long i = 0; i < sizeof(str_int); i++)
-    {
-        printf("[%f]", str_int[i]);
-    }
+        if ((str_int[i] != 0) || ((str_int[i] != 0) != (i == 0)))
+            printf("[%.2f]", str_int[i]);
+
     printf("\'");
+}
+
+complex calculate(int index, double arr[])
+{
+    complex temp;
+    for (int i = 0; i < index; i++)
+    {
+        ;
+    }
+    return temp;
 }
 
 complex add(complex n1, complex n2)
