@@ -12,7 +12,7 @@ typedef struct complex_number
 } complex;
 
 complex add(complex n1, complex n2);
-complex calculate(int index, double arr[]);
+complex calculate(double arr[]);
 
 void print_array(char str_chr[]);
 void print_int(double str_int[]);
@@ -22,8 +22,9 @@ int get_index(char str[], int space);
 
 int main()
 {
+    printf("\e[1;1H\e[2J");
     int option = 0, approval = 0;
-    int debug = 1;
+    int debug = 0;
     char equation[MAXLINE];
 
     char approved[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', '0', '+', '-', '(', ')', ' ', 'e', 'x', 'p', 'j', 'i', '\n'};
@@ -95,7 +96,7 @@ int main()
     */
 
     char operation[MAXLINE][MAXLINE];
-    double *result[MAXLINE][2];
+    double *result[MAXLINE];
     int index1 = 0, index2 = 0, inside = 0;
     memset(&operation[0], '\0', sizeof(operation));
     memset(&result[0], '\0', sizeof(result));
@@ -124,22 +125,26 @@ int main()
 
     char *compiled[index1];
     int temp_index;
+    complex res;
+    res.imag = 0;
+    res.real = 0;
 
     for (int i = 0; i <= index1; i++)
     {
         compiled[i] = ready_to_compile(operation[i]);
         temp_index = get_index(operation[i], 0);
-        result[i][temp_index] = compile(compiled[i], temp_index);
-        print_int(result[i][temp_index]);
+        result[i] = compile(compiled[i], temp_index);
+        //print_int(result[i]);
+        res = add(calculate(result[i]), res);
     }
-
-    complex res;
-
-    res = calculate(result, index1);
 
     printf("\n...");
 
-    printf("\n\nquiting!");
+    printf("\n\treal : %f, imag : %f", res.real, res.imag);
+
+    printf("\n....");
+
+    printf("\n\nquiting !!\n");
     return 0;
 }
 
@@ -179,21 +184,24 @@ double *compile(char str[], int temp_index)
     if (temp_index == 0 || temp_index == 1)
     {
         op[0] = temp_index;
-        op[1] = atof(str);
+        op[1] = 1;
+        op[2] = atof(str);
     }
     else if (temp_index == 2)
     {
         op[0] = temp_index;
-        op[1] = atof(str);
+        op[1] = 3;
+        op[2] = atof(str);
+        op[4] = 1;
 
         char *ptr = strtok(str, "*");
         char buffer[10];
         ptr = strtok(NULL, "*");
-        op[2] = atof(ptr);
+        op[3] = atof(ptr);
         ptr = strtok(ptr, "j");
-        gcvt(op[2], 10, buffer);
+        gcvt(op[3], 10, buffer);
         if (strcmp(ptr, buffer) != 0)
-            op[3] = M_PI;
+            op[4] = M_PI;
     }
 
     return op;
@@ -244,15 +252,42 @@ void print_int(double str_int[])
     printf("\'");
 }
 
-complex calculate(int index, double arr[])
+complex calculate(double arr[])
 {
     complex temp;
-    for (int i = 0; i < index; i++)
+    temp.imag = 0;
+    temp.real = 0;
+
+    for (int i = 0; i < (int)arr[1]; i++)
     {
-        ;
+
+        if (arr[0] == 0)
+        {
+            temp.imag = 0;
+            temp.real = arr[2];
+            return temp;
+        }
+        else if (arr[0] == 1)
+        {
+            temp.imag = arr[2];
+            temp.real = 0;
+            return temp;
+        }
+        else if (arr[0] == 2)
+        {
+            double degree = 180.0 * arr[3] * arr[4];
+            temp.real = arr[2] * cos(degree);
+            temp.imag = arr[2] * sin(degree);
+            return temp;
+        }
     }
-    return temp;
+
+    //printf("\n\treal : %f, imag : %f", temp.real, temp.imag);
 }
+
+/*
+    1+2j+6exp(-0.3pij)+6j+9+0.23exp(-0.4j)+12j
+*/
 
 complex add(complex n1, complex n2)
 {
@@ -261,3 +296,10 @@ complex add(complex n1, complex n2)
     temp.imag = n1.imag + n2.imag;
     return temp;
 }
+
+/*
+    giris problem tanitimi 
+    matematiksel kisim
+    test sonuclari
+    sonuc
+*/
