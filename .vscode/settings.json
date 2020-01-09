@@ -2,6 +2,11 @@
     "files.associations": {
         "stdlib.h": "c",
         "string.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "algorithm": "c",
+        "chrono": "c",
+        "limits": "c",
+        "random": "c",
+        "ratio": "c"
     }
 }
